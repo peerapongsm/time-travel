@@ -2,6 +2,25 @@ import { describe, expect, it } from "vitest";
 import type { Briefing } from "../src/domain";
 import { windows } from "../src/data/windows";
 import { validateBriefings } from "../src/lib/validateContent";
+import { briefings } from "../src/data";
+
+describe("ancient and medieval course content", () => {
+  it("covers the first 13 canonical windows with at least 18 sourced opportunities", () => {
+    const earlyBriefings = briefings.filter((briefing) => briefing.window.end <= 1499);
+    expect(earlyBriefings.map((briefing) => briefing.window)).toEqual(windows.slice(0, 13));
+    expect(earlyBriefings.flatMap((briefing) => briefing.opportunities).length).toBeGreaterThanOrEqual(18);
+    expect(validateBriefings(earlyBriefings)).toEqual([]);
+  });
+
+  it("keeps ancient returns qualitative and identifies the hypothetical recommendation", () => {
+    for (const opportunity of briefings.filter((briefing) => briefing.window.end <= 1499).flatMap((briefing) => briefing.opportunities)) {
+      expect(opportunity.payoff).toEqual(expect.objectContaining({ basis: "qualitative" }));
+      expect(opportunity.payoff.multiple).toBeUndefined();
+      expect(opportunity.action).toContain("Inference:");
+      expect(opportunity.lesson.choices.filter((choice) => choice.correct)).toHaveLength(1);
+    }
+  });
+});
 
 const validBriefing = (): Briefing => ({
   id: "fixture",
