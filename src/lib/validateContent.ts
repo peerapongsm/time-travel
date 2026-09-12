@@ -1,4 +1,5 @@
 import type { Briefing, Opportunity } from "../domain";
+import { windows } from "../data/windows";
 
 const hasText = (value: string): boolean => value.trim().length > 0;
 
@@ -73,8 +74,18 @@ const validateOpportunity = (opportunity: Opportunity, errors: string[]): void =
     errors.push(`Opportunity ${opportunity.id} needs two or three lesson choices with a correct answer.`);
   }
 
-  if (opportunity.payoff.multiple !== undefined && opportunity.payoff.basis !== "documented") {
-    errors.push(`Opportunity ${opportunity.id} numeric payoff must be documented.`);
+  if (choices.some((choice) => !hasText(choice.label) || !hasText(choice.consequence))) {
+    errors.push(`Opportunity ${opportunity.id} needs lesson choice text.`);
+  }
+
+  if (opportunity.payoff.multiple !== undefined) {
+    if (!Number.isFinite(opportunity.payoff.multiple) || opportunity.payoff.multiple <= 0) {
+      errors.push(`Opportunity ${opportunity.id} numeric payoff must be a positive finite multiple.`);
+    }
+
+    if (opportunity.payoff.basis !== "documented") {
+      errors.push(`Opportunity ${opportunity.id} numeric payoff must be documented.`);
+    }
   }
 
   validateSources(opportunity, errors);
@@ -96,6 +107,10 @@ export const validateBriefings = (items: readonly Briefing[]): string[] => {
 
     if (!Number.isInteger(briefing.window.start) || !Number.isInteger(briefing.window.end) || briefing.window.start > briefing.window.end) {
       errors.push(`Briefing ${briefing.id} has an invalid window.`);
+    }
+
+    if (!windows.some((window) => window.start === briefing.window.start && window.end === briefing.window.end)) {
+      errors.push(`Briefing ${briefing.id} must use a canonical window.`);
     }
 
     if (briefing.opportunities.length === 0) {

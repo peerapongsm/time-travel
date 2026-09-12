@@ -5,7 +5,7 @@ import { validateBriefings } from "../src/lib/validateContent";
 
 const validBriefing = (): Briefing => ({
   id: "fixture",
-  window: { start: 1, end: 1 },
+  window: windows[4],
   opportunities: [
     {
       id: "fixture-opportunity",
@@ -58,6 +58,13 @@ describe("briefing content validation", () => {
     expect(validateBriefings([validBriefing()])).toEqual([]);
   });
 
+  it("rejects a window that is not an exact canonical entry", () => {
+    const item = validBriefing();
+    item.window = { start: 2, end: 2 };
+
+    expect(validateBriefings([item]).join(" ")).toMatch(/canonical window/i);
+  });
+
   it("rejects duplicate ids and partial window overlaps", () => {
     const first = validBriefing();
     const second = validBriefing();
@@ -92,6 +99,13 @@ describe("briefing content validation", () => {
     expect(validateBriefings([item]).join(" ")).toMatch(/access/i);
   });
 
+  it.each(["label", "consequence"] as const)("rejects a blank lesson choice %s", (field) => {
+    const item = validBriefing();
+    item.opportunities[0].lesson.choices[0][field] = "   ";
+
+    expect(validateBriefings([item]).join(" ")).toMatch(/lesson choice/i);
+  });
+
   it("rejects non-HTTPS evidence URLs", () => {
     const item = validBriefing();
     item.opportunities[0].sources[0].url = "http://example.com/history";
@@ -104,6 +118,23 @@ describe("briefing content validation", () => {
     item.opportunities[0].payoff = { label: "2x", multiple: 2, basis: "documented" };
 
     expect(validateBriefings([item]).join(" ")).toMatch(/numeric payoff/i);
+  });
+
+  it.each([Number.NaN, Number.POSITIVE_INFINITY, 0, -1])(
+    "rejects an invalid numeric payoff multiple: %s",
+    (multiple) => {
+      const item = validBriefing();
+      item.opportunities[0].payoff = { label: "2x", multiple, basis: "documented" };
+
+      expect(validateBriefings([item]).join(" ")).toMatch(/positive finite/i);
+    }
+  );
+
+  it.each(["title", "publisher", "claim"] as const)("rejects a blank source %s", (field) => {
+    const item = validBriefing();
+    item.opportunities[0].sources[0][field] = "   ";
+
+    expect(validateBriefings([item]).join(" ")).toMatch(/incomplete source/i);
   });
 
   it("accepts numeric evidence from one publisher when the URLs are distinct", () => {
