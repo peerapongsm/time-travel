@@ -88,6 +88,58 @@ describe("early modern and industrial course content", () => {
       expect(opportunity.lesson.choices.filter((choice) => choice.correct)).toHaveLength(1);
     }
   });
+
+  it("publishes availability gates and an actionable posture before late-window mechanisms exist", () => {
+    const opportunities = new Map(
+      briefings
+        .filter((briefing) => briefing.window.start >= 1500 && briefing.window.end <= 1949)
+        .flatMap((briefing) => briefing.opportunities)
+        .map((opportunity) => [opportunity.id, opportunity])
+    );
+
+    expect(opportunities.size).toBe(32);
+    for (const opportunity of opportunities.values()) {
+      expect(opportunity.action).toMatch(/^Case evidence:[\s\S]+?\s+Availability:\s+\S[\s\S]+?\s+Inference:/);
+    }
+
+    const lateMechanisms = [
+      ["antwerp-bourse-brokerage", "1532"],
+      ["london-exchange-intelligence", "1571"],
+      ["scheldt-transshipment-service", "late sixteenth century"],
+      ["amsterdam-bank-settlement", "1609"],
+      ["amsterdam-exchange-logistics", "1611"],
+      ["lloyds-shipping-intelligence", "1688"],
+      ["lloyds-cargo-insurance", "1688"],
+      ["south-sea-capital-preservation", "1720 frenzy"],
+      ["bridgewater-canal-carriage", "1761"],
+      ["boulton-watt-installation", "1777"],
+      ["jacquard-card-service", "1804-1805"],
+      ["hudson-steamboat-wharf", "1807"],
+      ["erie-canal-supplies", "1817"],
+      ["erie-canal-freight", "1825"],
+      ["stockton-rail-maintenance", "1825"],
+      ["railway-telegraph-service", "1839"],
+      ["gold-rush-logistics", "1849"],
+      ["railway-mania-exit", "mid-1840s"],
+      ["sewing-machine-service", "1851"],
+      ["atlantic-cable-messages", "1866"],
+      ["bessemer-tooling-service", "1865"],
+      ["pearl-street-electrics", "1882"],
+      ["electric-tube-connections", "1890 opening"],
+      ["model-t-service", "1908"],
+      ["assembly-line-quality", "1913"],
+      ["radio-repair-service", "confirmed customer has a compatible radio"],
+      ["baby-bond-savings", "1935"],
+      ["transistor-training", "June 1948 public announcement"]
+    ] as const;
+
+    for (const [id, availabilityMarker] of lateMechanisms) {
+      const action = opportunities.get(id)?.action;
+      expect(action, `${id} should exist`).toBeDefined();
+      expect(action).toContain(availabilityMarker);
+      expect(action).toMatch(/\bEarlier arrival:\s+\S/);
+    }
+  });
 });
 
 const validBriefing = (): Briefing => ({
