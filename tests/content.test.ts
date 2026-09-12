@@ -8,6 +8,24 @@ describe("ancient and medieval course content", () => {
   it("covers the first 13 canonical windows with at least 18 sourced opportunities", () => {
     const earlyBriefings = briefings.filter((briefing) => briefing.window.end <= 1499);
     expect(earlyBriefings.map((briefing) => briefing.window)).toEqual(windows.slice(0, 13));
+    const firstOpportunityIds = [
+      "uruk-accounts",
+      "kanesh-tin",
+      "sidon-textile-orders",
+      "athens-spina-pottery",
+      "roman-glass-distribution",
+      "gansu-commercial-agent",
+      "samarkand-caravan-supplies",
+      "changsha-export-bowls",
+      "song-market-delivery",
+      "quanzhou-kiln-port-link",
+      "kilwa-ceramic-orders",
+      "lubeck-merchant-service",
+      "venice-book-orders"
+    ];
+    earlyBriefings.forEach((briefing, index) => {
+      expect(briefing.opportunities[0].id).toBe(firstOpportunityIds[index]);
+    });
     expect(earlyBriefings.flatMap((briefing) => briefing.opportunities).length).toBeGreaterThanOrEqual(18);
     expect(validateBriefings(earlyBriefings)).toEqual([]);
   });
@@ -16,7 +34,7 @@ describe("ancient and medieval course content", () => {
     for (const opportunity of briefings.filter((briefing) => briefing.window.end <= 1499).flatMap((briefing) => briefing.opportunities)) {
       expect(opportunity.payoff).toEqual(expect.objectContaining({ basis: "qualitative" }));
       expect(opportunity.payoff.multiple).toBeUndefined();
-      expect(opportunity.action).toContain("Inference:");
+      expect(opportunity.action).toMatch(/^Case evidence:\s+\S[\s\S]*?\s+Inference:/);
       expect(opportunity.lesson.choices.filter((choice) => choice.correct)).toHaveLength(1);
     }
   });
