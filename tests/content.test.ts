@@ -40,6 +40,56 @@ describe("ancient and medieval course content", () => {
   });
 });
 
+describe("early modern and industrial course content", () => {
+  it("covers the 21 canonical windows from 1500 through 1949 with at least 30 sourced opportunities", () => {
+    const eraBriefings = briefings.filter((briefing) => briefing.window.start >= 1500 && briefing.window.end <= 1949);
+    expect(eraBriefings.map((briefing) => briefing.window)).toEqual(windows.slice(13, 34));
+
+    const firstOpportunityIds = [
+      "antwerp-bourse-brokerage",
+      "london-exchange-intelligence",
+      "amsterdam-bank-settlement",
+      "lloyds-shipping-intelligence",
+      "aire-calder-freight",
+      "bridgewater-canal-carriage",
+      "jacquard-card-service",
+      "erie-canal-supplies",
+      "erie-canal-freight",
+      "railway-telegraph-service",
+      "gold-rush-logistics",
+      "sewing-machine-service",
+      "atlantic-cable-messages",
+      "suez-route-logistics",
+      "pearl-street-electrics",
+      "electric-tube-connections",
+      "model-t-service",
+      "assembly-line-quality",
+      "pre-crash-deleveraging",
+      "baby-bond-savings",
+      "transistor-training"
+    ];
+
+    eraBriefings.forEach((briefing, index) => {
+      expect(briefing.opportunities[0].id).toBe(firstOpportunityIds[index]);
+    });
+    expect(eraBriefings.flatMap((briefing) => briefing.opportunities)).toHaveLength(32);
+    expect(validateBriefings(eraBriefings)).toEqual([]);
+  });
+
+  it("keeps returns qualitative, separates evidence from inference, and has one correct lesson choice", () => {
+    const opportunities = briefings
+      .filter((briefing) => briefing.window.start >= 1500 && briefing.window.end <= 1949)
+      .flatMap((briefing) => briefing.opportunities);
+
+    for (const opportunity of opportunities) {
+      expect(opportunity.payoff.basis).toBe("qualitative");
+      expect(opportunity.payoff.multiple).toBeUndefined();
+      expect(opportunity.action).toMatch(/^Case evidence:\s+\S[\s\S]*?\s+Inference:/);
+      expect(opportunity.lesson.choices.filter((choice) => choice.correct)).toHaveLength(1);
+    }
+  });
+});
+
 const validBriefing = (): Briefing => ({
   id: "fixture",
   window: windows[4],
