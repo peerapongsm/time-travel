@@ -26,6 +26,39 @@ describe("arrival console", () => {
     expect(document.querySelector("button[aria-label='Use CE']")).not.toBeNull();
     expect(document.querySelector("button[type='submit']")?.textContent).toBe("Generate briefing");
     expect(document.querySelector("button[aria-label='Jump to 3000 BCE']")).not.toBeNull();
+    expect(console.querySelector<HTMLInputElement>("input[type='range']")?.getAttribute("aria-label")).toBe("Timeline year");
+    expect(console.querySelector("output")?.textContent).toBe("2026 CE");
+    expect(console.querySelector("button.random-button")?.textContent).toBe("Random briefing");
+  });
+
+  it("scrubs the timeline and can open a random researched briefing", () => {
+    const onRouteChange = vi.fn();
+    const console = renderArrival({
+      route: { year: { year: 2026, era: "CE" }, briefingId: null },
+      items,
+      onRouteChange
+    });
+    document.body.append(console);
+    const scrubber = console.querySelector<HTMLInputElement>("input[type='range']")!;
+    scrubber.value = "-2999";
+    scrubber.dispatchEvent(new Event("input", { bubbles: true }));
+
+    expect(console.querySelector<HTMLInputElement>("input[name='year']")?.value).toBe("3000");
+    expect(console.querySelector("button[aria-label='Use BCE']")?.getAttribute("aria-pressed")).toBe("true");
+    expect(console.querySelector("output")?.textContent).toBe("3000 BCE");
+
+    const input = console.querySelector<HTMLInputElement>("input[name='year']")!;
+    input.value = "500";
+    console.querySelector<HTMLButtonElement>("button[aria-label='Use CE']")!.click();
+    expect(console.querySelector("output")?.textContent).toBe("500 CE");
+
+    vi.spyOn(Math, "random").mockReturnValue(0.99);
+    console.querySelector<HTMLButtonElement>("button.random-button")!.click();
+    expect(onRouteChange).toHaveBeenLastCalledWith({
+      year: { year: 2016, era: "CE" },
+      briefingId: "modern-briefing"
+    });
+    vi.restoreAllMocks();
   });
 
   it("announces an invalid civil year", () => {
