@@ -4,7 +4,11 @@ import { renderArrival } from "./arrival";
 
 export const renderApp = (root: HTMLElement): void => {
   root.replaceChildren();
+  const route = readRoute();
   const shell = document.createElement("div");
+  if (route.briefingId && briefings.some(({ id }) => id === route.briefingId)) {
+    shell.dataset.briefingId = route.briefingId;
+  }
   shell.className = "app-shell";
   const rail = document.createElement("aside");
   rail.className = "console-rail";
@@ -17,7 +21,7 @@ export const renderApp = (root: HTMLElement): void => {
   copy.textContent = "Your selected briefing will appear here.";
   briefing.append(heading, copy);
   rail.append(renderArrival({
-    route: readRoute(),
+    route,
     items: briefings,
     onRouteChange: (route) => {
       writeRoute(route);

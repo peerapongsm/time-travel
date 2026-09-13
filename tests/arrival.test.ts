@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Briefing } from "../src/domain";
+import { renderApp } from "../src/ui/app";
 import { renderArrival } from "../src/ui/arrival";
 
 const briefing = (id: string, start: number, end: number): Briefing => ({
@@ -19,8 +20,8 @@ describe("arrival console", () => {
     const console = renderArrival({ route: { year: { year: 2026, era: "CE" }, briefingId: null }, items });
 
     document.body.append(console);
-    expect(document.querySelector("label[for='arrival-year']")?.textContent).toBe("Civil year");
-    expect(document.querySelector<HTMLInputElement>("#arrival-year")?.value).toBe("2026");
+    expect(document.querySelector("label")?.textContent).toBe("Civil year");
+    expect(document.querySelector<HTMLInputElement>("input[name='year']")?.value).toBe("2026");
     expect(document.querySelector("button[aria-label='Use BCE']")).not.toBeNull();
     expect(document.querySelector("button[aria-label='Use CE']")).not.toBeNull();
     expect(document.querySelector("button[type='submit']")?.textContent).toBe("Generate briefing");
@@ -30,7 +31,7 @@ describe("arrival console", () => {
   it("announces an invalid civil year", () => {
     const console = renderArrival({ route: { year: { year: 2026, era: "CE" }, briefingId: null }, items });
     document.body.append(console);
-    const input = console.querySelector<HTMLInputElement>("#arrival-year")!;
+    const input = console.querySelector<HTMLInputElement>("input[name='year']")!;
 
     input.value = "0";
     console.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
@@ -46,7 +47,7 @@ describe("arrival console", () => {
       items,
       onRouteChange
     });
-    const input = console.querySelector<HTMLInputElement>("#arrival-year")!;
+    const input = console.querySelector<HTMLInputElement>("input[name='year']")!;
 
     input.value = "2016";
     console.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
@@ -65,7 +66,7 @@ describe("arrival console", () => {
       items,
       onRouteChange
     });
-    const input = console.querySelector<HTMLInputElement>("#arrival-year")!;
+    const input = console.querySelector<HTMLInputElement>("input[name='year']")!;
 
     input.value = "100";
     console.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
@@ -80,5 +81,29 @@ describe("arrival console", () => {
       year: { year: 2016, era: "CE" },
       briefingId: "modern-briefing"
     });
+  });
+
+  it("gives each mounted console unique labeled control ids", () => {
+    const first = renderArrival({ route: { year: { year: 2026, era: "CE" }, briefingId: null }, items });
+    const second = renderArrival({ route: { year: { year: 2026, era: "CE" }, briefingId: null }, items });
+    document.body.append(first, second);
+
+    const firstInput = first.querySelector<HTMLInputElement>("input[name='year']")!;
+    const secondInput = second.querySelector<HTMLInputElement>("input[name='year']")!;
+    expect(firstInput.id).not.toBe(secondInput.id);
+    expect(first.querySelector("label")?.getAttribute("for")).toBe(firstInput.id);
+    expect(second.querySelector("label")?.getAttribute("for")).toBe(secondInput.id);
+    expect(first.getAttribute("aria-labelledby")).toBe(first.querySelector("h1")?.id);
+    expect(second.getAttribute("aria-labelledby")).toBe(second.querySelector("h1")?.id);
+    expect(firstInput.getAttribute("aria-describedby")).not.toBe(secondInput.getAttribute("aria-describedby"));
+  });
+
+  it("restores a selected briefing from a fresh linkable route", () => {
+    window.history.replaceState({}, "", "/?year=2016&era=CE&briefing=diversified-index-2016-briefing");
+    const root = document.createElement("div");
+    renderApp(root);
+
+    expect(root.querySelector<HTMLElement>(".app-shell")?.dataset.briefingId).toBe("diversified-index-2016-briefing");
+    expect(root.querySelector("[role='status']")?.textContent).toBe("Briefing ready for 2016 CE.");
   });
 });

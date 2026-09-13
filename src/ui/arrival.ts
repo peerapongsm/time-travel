@@ -21,13 +21,19 @@ const jumps: CivilYear[] = [
 const windowLabel = (briefing: Briefing): string =>
   `${formatYear(briefing.window.start)} to ${formatYear(briefing.window.end)}`;
 
+let arrivalInstance = 0;
+
 export const renderArrival = ({ route, items, onRouteChange }: ArrivalOptions): HTMLElement => {
+  const instanceId = String(++arrivalInstance);
+  const titleId = `arrival-title-${instanceId}`;
+  const inputId = `arrival-year-${instanceId}`;
+  const hintId = `arrival-year-hint-${instanceId}`;
   const section = document.createElement("section");
   section.className = "arrival-console";
-  section.setAttribute("aria-labelledby", "arrival-title");
+  section.setAttribute("aria-labelledby", titleId);
 
   const title = document.createElement("h1");
-  title.id = "arrival-title";
+  title.id = titleId;
   title.textContent = "Temporal arrival";
   section.append(title);
 
@@ -41,10 +47,10 @@ export const renderArrival = ({ route, items, onRouteChange }: ArrivalOptions): 
   const field = document.createElement("div");
   field.className = "year-field";
   const label = document.createElement("label");
-  label.htmlFor = "arrival-year";
+  label.htmlFor = inputId;
   label.textContent = "Civil year";
   const input = document.createElement("input");
-  input.id = "arrival-year";
+  input.id = inputId;
   input.name = "year";
   input.type = "number";
   input.inputMode = "numeric";
@@ -53,10 +59,10 @@ export const renderArrival = ({ route, items, onRouteChange }: ArrivalOptions): 
   input.required = true;
   input.value = String(route.year.year);
   const hint = document.createElement("p");
-  hint.id = "arrival-year-hint";
+  hint.id = hintId;
   hint.className = "field-hint";
   hint.textContent = "3000 BCE through 2026 CE. There is no year zero.";
-  input.setAttribute("aria-describedby", hint.id);
+  input.setAttribute("aria-describedby", hintId);
   field.append(label, input, hint);
   form.append(field);
 
@@ -98,6 +104,14 @@ export const renderArrival = ({ route, items, onRouteChange }: ArrivalOptions): 
   status.className = "arrival-status";
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
+  const selected = route.briefingId ? items.find(({ id }) => id === route.briefingId) : null;
+  const selectedYear = parseYear(route.year.year, route.year.era);
+  if (selected && selectedYear.ok) {
+    const resolution = resolveBriefing(selectedYear.value, items);
+    if (resolution.kind === "exact" && resolution.briefing.id === selected.id) {
+      status.textContent = `Briefing ready for ${formatYear(selectedYear.value)}.`;
+    }
+  }
   section.append(status);
   const gapActions = document.createElement("div");
   gapActions.className = "gap-actions";
