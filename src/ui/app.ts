@@ -1,6 +1,7 @@
 import { briefings } from "../data";
 import { readRoute, writeRoute } from "../lib/route";
 import { renderArrival } from "./arrival";
+import { renderBriefing } from "./briefing";
 
 export const renderApp = (root: HTMLElement): void => {
   root.replaceChildren();
@@ -15,17 +16,26 @@ export const renderApp = (root: HTMLElement): void => {
   const briefing = document.createElement("main");
   briefing.className = "briefing-pane";
   briefing.tabIndex = -1;
-  const heading = document.createElement("h2");
-  heading.textContent = "Mission briefing";
-  const copy = document.createElement("p");
-  copy.textContent = "Your selected briefing will appear here.";
-  briefing.append(heading, copy);
+  const renderPane = (briefingId: string | null): void => {
+    const selected = briefingId ? briefings.find(({ id }) => id === briefingId) : undefined;
+    if (selected) {
+      briefing.replaceChildren(renderBriefing({ briefing: selected }));
+      return;
+    }
+    const heading = document.createElement("h2");
+    heading.textContent = "Mission briefing";
+    const copy = document.createElement("p");
+    copy.textContent = "Your selected briefing will appear here.";
+    briefing.replaceChildren(heading, copy);
+  };
+  renderPane(route.briefingId);
   rail.append(renderArrival({
     route,
     items: briefings,
     onRouteChange: (route) => {
       writeRoute(route);
       shell.dataset.briefingId = route.briefingId ?? "";
+      renderPane(route.briefingId);
     }
   }));
   shell.append(rail, briefing);

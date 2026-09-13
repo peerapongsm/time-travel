@@ -84,6 +84,93 @@ input {
   color: #f8fafc;
 }
 
+.historical-briefing {
+  display: grid;
+  gap: 1rem;
+}
+
+.mission-card,
+.briefing-stage,
+.supported-alternatives {
+  padding: 1rem;
+  border: 1px solid #314355;
+  border-radius: 0.8rem;
+  background: #172330;
+}
+
+.mission-card h1,
+.briefing-stage h2,
+.supported-alternatives h2 {
+  margin: 0;
+  color: #f8fafc;
+}
+
+.mission-destination {
+  margin-bottom: 0;
+  color: #7dd3fc;
+  font-weight: 700;
+}
+
+.briefing-stage h3,
+.supported-alternatives h3 {
+  margin: 1rem 0 0.4rem;
+  font-size: 1rem;
+}
+
+.briefing-stage p,
+.briefing-stage li,
+.supported-alternatives p,
+.supported-alternatives li {
+  line-height: 1.5;
+}
+
+.briefing-stage dl {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) minmax(0, 1fr);
+  gap: 0.45rem 1rem;
+}
+
+.briefing-stage dt {
+  color: #b7c4d1;
+  font-weight: 700;
+}
+
+.briefing-stage dd {
+  margin: 0;
+}
+
+.briefing-stage ul,
+.supported-alternatives ul {
+  display: grid;
+  gap: 0.75rem;
+  padding-left: 1.25rem;
+}
+
+.briefing-stage a {
+  color: #7dd3fc;
+}
+
+.lesson-choices {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.lesson-feedback {
+  min-height: 1.5rem;
+  color: #bbf7d0;
+  line-height: 1.5;
+}
+
+.completion-stamp {
+  display: inline-block;
+  width: fit-content;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid #86efac;
+  border-radius: 999px;
+  color: #bbf7d0;
+  font-weight: 700;
+}
+
 .arrival-console h1 {
   margin: 0;
   color: #f8fafc;
