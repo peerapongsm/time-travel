@@ -55,6 +55,7 @@ describe("interactive lesson", () => {
 
   it("resets completion and makes the next choice available", () => {
     const view = renderLesson({ briefing });
+    expect(view.querySelector<HTMLButtonElement>("button[data-reset]")?.textContent).toBe("Reset all course progress");
     view.querySelector<HTMLButtonElement>("button[data-choice]")!.click();
     view.querySelector<HTMLButtonElement>("button[data-reset]")!.click();
 

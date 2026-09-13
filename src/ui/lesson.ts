@@ -27,7 +27,7 @@ export const renderLesson = ({ briefing }: LessonOptions): HTMLElement => {
   const reset = document.createElement("button");
   reset.type = "button";
   reset.dataset.reset = "";
-  reset.textContent = "Reset lesson progress";
+  reset.textContent = "Reset all course progress";
   let answered = loadProgress().completedBriefingIds.includes(briefing.id);
   let stamp: HTMLElement | null = null;
   const buttons: HTMLButtonElement[] = [];

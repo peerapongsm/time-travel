@@ -106,4 +106,14 @@ describe("arrival console", () => {
     expect(root.querySelector<HTMLElement>(".app-shell")?.dataset.briefingId).toBe("diversified-index-2016-briefing");
     expect(root.querySelector("[role='status']")?.textContent).toBe("Briefing ready for 2016 CE.");
   });
+
+  it("ignores a known briefing from a different route year", () => {
+    window.history.replaceState({}, "", "/?year=2026&era=CE&briefing=first-ledgers");
+    const root = document.createElement("div");
+    renderApp(root);
+
+    expect(root.querySelector<HTMLElement>(".app-shell")?.dataset.briefingId).toBeUndefined();
+    expect(root.querySelector(".historical-briefing")).toBeNull();
+    expect(root.querySelector("[role='status']")?.textContent).toBe("");
+  });
 });

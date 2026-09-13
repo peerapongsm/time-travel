@@ -1,13 +1,25 @@
 import { briefings } from "../data";
+import { resolveBriefing } from "../lib/resolve";
 import { readRoute, writeRoute } from "../lib/route";
+import type { RouteState } from "../lib/route";
+import { parseYear } from "../lib/year";
 import { renderArrival } from "./arrival";
 import { renderBriefing } from "./briefing";
 
+const resolveRoute = (route: RouteState): RouteState => {
+  const year = parseYear(route.year.year, route.year.era);
+  if (!year.ok) return { ...route, briefingId: null };
+
+  const resolution = resolveBriefing(year.value, briefings);
+  if (resolution.kind === "exact" && resolution.briefing.id === route.briefingId) return route;
+  return { ...route, briefingId: null };
+};
+
 export const renderApp = (root: HTMLElement): void => {
   root.replaceChildren();
-  const route = readRoute();
+  const route = resolveRoute(readRoute());
   const shell = document.createElement("div");
-  if (route.briefingId && briefings.some(({ id }) => id === route.briefingId)) {
+  if (route.briefingId) {
     shell.dataset.briefingId = route.briefingId;
   }
   shell.className = "app-shell";
@@ -32,10 +44,11 @@ export const renderApp = (root: HTMLElement): void => {
   rail.append(renderArrival({
     route,
     items: briefings,
-    onRouteChange: (route) => {
-      writeRoute(route);
-      shell.dataset.briefingId = route.briefingId ?? "";
-      renderPane(route.briefingId);
+    onRouteChange: (nextRoute) => {
+      const resolvedRoute = resolveRoute(nextRoute);
+      writeRoute(resolvedRoute);
+      shell.dataset.briefingId = resolvedRoute.briefingId ?? "";
+      renderPane(resolvedRoute.briefingId);
     }
   }));
   shell.append(rail, briefing);
