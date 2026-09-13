@@ -10,7 +10,7 @@
   --decision: #e9af45;
   --paper: #f3ecde;
   --paper-rule: #c8beac;
-  --muted: #587083;
+  --muted: #536b7c;
   --ink: #172431;
   --danger: #a23b36;
 }
@@ -325,6 +325,18 @@ input, select {
 
 .methodology section h2 { margin: 0 0 0.45rem; font-family: Georgia, "Times New Roman", serif; }
 .methodology section p { margin: 0; }
+
+@media (max-width: 799px) {
+  .arrival-console > form {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    margin-inline: -1rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid #34546b;
+    background: var(--rail);
+  }
+}
 
 @media (min-width: 800px) {
   .app-shell {
