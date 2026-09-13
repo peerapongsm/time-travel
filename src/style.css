@@ -1,13 +1,258 @@
 :root {
-  font-family: system-ui, sans-serif;
-  color: #edf2f7;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #e9eef5;
   background: #101820;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #101820;
+}
+
+button,
+input {
+  min-height: 44px;
+  border: 1px solid #435466;
+  border-radius: 0.65rem;
+  font: inherit;
+}
+
+button {
+  padding: 0.65rem 0.9rem;
+  color: #f4f7fb;
+  background: #243445;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2d4156;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
+input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  color: #111827;
+  background: #f8fafc;
 }
 
 #app {
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: grid;
+  min-height: 100vh;
+  gap: 1rem;
   padding: 1rem;
+}
+
+.console-rail,
+.briefing-pane {
+  min-width: 0;
+}
+
+.console-rail {
+  padding: 1rem;
+  border: 1px solid #314355;
+  border-radius: 1rem;
+  background: #172330;
+}
+
+.briefing-pane {
+  padding: 1.25rem;
+  border: 1px solid #263747;
+  border-radius: 1rem;
+  background: #121d27;
+}
+
+.briefing-pane h2 {
+  margin-top: 0;
+  color: #f8fafc;
+}
+
+.arrival-console h1 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(1.7rem, 5vw, 2.5rem);
+  letter-spacing: -0.03em;
+}
+
+.arrival-intro,
+.field-hint {
+  color: #b7c4d1;
+  line-height: 1.5;
+}
+
+.year-field {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+}
+
+.year-field label,
+.era-controls legend {
+  color: #dce7f1;
+  font-weight: 700;
+}
+
+.field-hint {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.era-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 0;
+  border: 0;
+}
+
+.era-controls legend {
+  width: 100%;
+  margin-bottom: 0.4rem;
+}
+
+.era-controls button[aria-pressed="true"] {
+  border-color: #7dd3fc;
+  color: #07131d;
+  background: #7dd3fc;
+}
+
+.generate-button {
+  width: 100%;
+  border-color: #fbbf24;
+  color: #241400;
+  background: #fbbf24;
+  font-weight: 800;
+}
+
+.generate-button:hover {
+  background: #fcd34d;
+}
+
+.arrival-alert,
+.arrival-status {
+  min-height: 1.5rem;
+  margin: 1rem 0 0;
+  line-height: 1.45;
+}
+
+.arrival-alert {
+  color: #fecaca;
+}
+
+.arrival-status {
+  color: #bbf7d0;
+}
+
+.gap-actions,
+.era-jumps {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.gap-actions button {
+  text-align: left;
+}
+
+.era-jumps {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: 1rem;
+  border-top: 1px solid #314355;
+}
+
+.era-jumps p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #b7c4d1;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 799px) {
+  .app-shell {
+    grid-template-rows: 1fr auto;
+    padding: 0.75rem;
+  }
+
+  .briefing-pane {
+    order: 1;
+  }
+
+  .console-rail {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    order: 2;
+    padding: 0.8rem;
+    border-bottom-right-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+    box-shadow: 0 -0.5rem 1.5rem rgb(0 0 0 / 24%);
+  }
+
+  .arrival-console h1,
+  .arrival-intro {
+    display: none;
+  }
+
+  .year-field {
+    margin-top: 0;
+  }
+
+  .era-controls {
+    margin: 0.6rem 0;
+  }
+
+  .era-jumps {
+    display: none;
+  }
+}
+
+@media (min-width: 800px) {
+  .app-shell {
+    grid-template-columns: minmax(22rem, 28rem) minmax(0, 1fr);
+    align-items: stretch;
+    padding: 1.5rem;
+  }
+
+  .console-rail {
+    position: sticky;
+    top: 1.5rem;
+    max-height: calc(100vh - 3rem);
+    overflow: auto;
+  }
+
+  .briefing-pane {
+    max-height: calc(100vh - 3rem);
+    overflow: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
