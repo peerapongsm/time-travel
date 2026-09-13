@@ -99,7 +99,7 @@ export const recent: Briefing[] = [
         id: "dotcom-deleveraging",
         destination: "Regulated U.S. securities market, 2000-2001",
         title: "Remove leverage as the dot-com story breaks",
-        evidence: "Contemporary SEC material identifies the 2000 dot-com peak and warned investors about false Internet and pre-IPO promotions; the NBER dates a recession from March through November 2001.",
+        evidence: "On September 14, 2000, the SEC described alleged false and misleading Internet pre-IPO claims and urged investors to investigate such offers; the NBER dates a recession from March through November 2001.",
         availability: "A defensive sale requires lawful custody, a regulated broker, an actual bid, and settlement before a position becomes illiquid.",
         earlier: "keep the portfolio diversified and unleveraged, research filings, and defer any thematic purchase that depends only on resale to another buyer.",
         inference: "trim Internet-company concentration and eliminate margin exposure without shorting, spreading rumors, or waiting for an exact chart peak.",
@@ -111,8 +111,8 @@ export const recent: Briefing[] = [
         risks: [{ kind: "liquidity", detail: "Prices can gap down and buyers can disappear before an order settles." }],
         lesson: ["Deleveraging", "What can hindsight safely improve before a bubble unwinds?", "Remove borrowing and cap the theme", "Short everything at maximum leverage", "The robust lesson is to remove forced-sale risk, not to manufacture or perfectly time a collapse."],
         sources: [
-          source("Presentation for the SEC Government-Business Forum", "U.S. Securities and Exchange Commission", "https://www.sec.gov/info/smallbus/2009gbforum/second-market-presentation.pdf", "The SEC-hosted chronology labels 2000 as the dot-com peak and 2001 as the following market transition.", "history"),
-          spHistory
+          source("1stBuy.com, Inc., and Roger D. Pringle", "U.S. Securities and Exchange Commission", "https://www.sec.gov/enforcement-litigation/litigation-releases/lr-16700", "The SEC's September 14, 2000 release describes alleged false pre-IPO timing, value, and listing claims made to Internet investors and urges investigation before purchase.", "mechanism"),
+          cycles
         ],
         confidence: "high",
         ethicsNote: "This is an exit and risk-control lesson; it excludes short selling, rumors, manipulation, and private tips."
@@ -143,12 +143,12 @@ export const recent: Briefing[] = [
     opportunities: [
       createOpportunity({
         id: "amazon-post-crash-sizing",
-        destination: "NASDAQ public market, 2002-2003",
+        destination: "NASDAQ public market, after Amazon's 2002 Form 10-K became public in 2003",
         title: "Require solvency evidence before buying a fallen survivor",
-        evidence: "Amazon's filed 2003 annual report shows 2002 and 2003 operating results, cash, debt, and continuing business risks after the Internet-sector unwind.",
-        availability: "Shares require a lawful broker, settled cash, a current market seller, and review of disclosures actually public on the trade date.",
-        earlier: "research the latest filings, preserve diversification, and defer purchase until liquidity and solvency can be evaluated from public records.",
-        inference: "take only a small cash-funded position after checking cash, obligations, dilution, and execution rather than buying solely because the price fell.",
+        evidence: "Amazon's 2002 Form 10-K reports its operations through December 31, 2002, year-end cash and securities, long-term debt, market risks, and NASDAQ listing.",
+        availability: "This evidence gate opens only after the 2002 Form 10-K is public in 2003; shares still require a lawful broker, settled cash, a current seller, and current disclosures.",
+        earlier: "before that filing is public, preserve diversification and defer purchase rather than importing later annual results into a 2002 decision.",
+        inference: "once the 2002 Form 10-K is public, take only a small cash-funded position after checking liquidity, obligations, dilution, and execution rather than buying solely because the price fell.",
         category: "asset",
         capitalTier: "working",
         access: ["A regulated broker, public SEC filings, an executable quote, settled cash, and capacity for total loss."],
@@ -157,7 +157,7 @@ export const recent: Briefing[] = [
         risks: [{ kind: "liquidity", detail: "A fallen company can continue falling, dilute owners, or fail despite a famous future." }],
         lesson: ["Fallen-price fallacy", "What makes a post-crash share investable?", "Public evidence of survival capacity", "A lower price by itself", "Price decline creates no margin of safety unless the business and balance sheet can endure."],
         sources: [
-          source("Amazon.com 2003 Form 10-K", "U.S. Securities and Exchange Commission", "https://www.sec.gov/Archives/edgar/data/1018724/000119312504029488/d10k.htm", "Amazon's filing reports 2002-03 operations, cash, marketable securities, obligations, and material business risks.", "history"),
+          source("Amazon.com 2002 Form 10-K", "U.S. Securities and Exchange Commission", "https://www.sec.gov/Archives/edgar/data/1018724/000095014903000355/v87419ore10vk.htm", "Amazon's filing reports the fiscal year ended December 31, 2002, its year-end balance sheet and debt, market risks, and NASDAQ National Market listing.", "history"),
           source("AMZN Historical", "Nasdaq", "https://www.nasdaq.com/market-activity/stocks/amzn/historical", "Nasdaq publishes dated historical market prices for Amazon common stock.", "price")
         ],
         confidence: "high"
@@ -607,7 +607,7 @@ export const recent: Briefing[] = [
         id: "concentration-rebalance-2024",
         destination: "Regulated U.S. equity markets, 2024",
         title: "Measure hidden concentration inside the broad index",
-        evidence: "S&P research dated July 2024 reports unusually high market-cap concentration and a large gap between cap-weighted and equal-weighted average company size.",
+        evidence: "S&P's July 2024 research, using data as of June 28, 2024, says its weighted-to-unweighted average-market-cap concentration measure had reached extremes not seen for more than half a century.",
         availability: "A rebalance requires lawful holdings, current fund disclosures, a regulated broker, settled alternatives, and awareness that equal weighting creates different turnover and risk.",
         earlier: "prepare a look-through exposure report, preserve liquidity, and defer trades until holdings, fees, taxes, and replacement instruments are verified.",
         inference: "measure overlapping mega-cap exposure across every fund and trim only enough to restore the intended diversification; do not assume equal weight must outperform.",
@@ -619,7 +619,7 @@ export const recent: Briefing[] = [
         risks: [{ kind: "execution", detail: "Alternative weighting can add turnover, fees, taxes, and different sector exposure." }],
         lesson: ["Look-through concentration", "Can several funds still create one large bet?", "Yes, when their largest holdings overlap", "No, fund count alone guarantees diversification", "Diversification depends on underlying exposures, not the number of account lines."],
         sources: [
-          source("A Systematic Approach for Identifying Companies with Economic Moats", "S&P Dow Jones Indices", "https://www.spglobal.com/spdji/en/research/article/a-systematic-approach-for-identifying-companies-with-economic-moats/", "The July 2024 S&P research documents extreme concentration measures and compares market-cap and equal-weight characteristics.", "history"),
+          source("Worth the Weight", "S&P Dow Jones Indices", "https://www.spglobal.com/spdji/en/documents/research/research-worth-the-weight.pdf", "The July 2024 report says its concentration measure reached extremes not seen for more than half a century, using data as of June 28, 2024.", "history"),
           diversification
         ],
         confidence: "high"
@@ -661,7 +661,7 @@ export const recent: Briefing[] = [
         id: "hindsight-ends-here",
         destination: "Present-day regulated accounts, evidence through September 12, 2026",
         title: "Hindsight ends here: keep liquidity and diversify",
-        evidence: "By the evidence cutoff, the Federal Reserve's July report described elevated uncertainty, Treasury had published bill quotations through September 10, and S&P data showed substantial concentration in the largest index constituents.",
+        evidence: "By the evidence cutoff, the Federal Reserve's July report described elevated uncertainty and Treasury had published dated bill quotations through September 10, 2026; neither record establishes what happens next.",
         availability: "Use only lawful instruments available in the traveler's jurisdiction and account today, with current disclosures, verified custody, and money matched to its time horizon.",
         earlier: "preserve a cash buffer, prepare a look-through allocation review, and wait for verified current terms rather than importing any later outcome.",
         inference: "hindsight ends here: diversify across appropriate assets, cap concentrated exposures, hold enough liquidity for near-term needs, and make no guaranteed move or numeric future-payoff claim.",
@@ -674,8 +674,7 @@ export const recent: Briefing[] = [
         lesson: ["Epistemic boundary", "What remains knowable after September 12, 2026?", "Current terms, exposures, and personal constraints", "A guaranteed winning asset and exit date", "Historical evidence can improve process, but no published source in scope establishes the future."],
         sources: [
           source("Monetary Policy Report - July 2026 summary", "Board of Governors of the Federal Reserve System", "https://www.federalreserve.gov/monetarypolicy/2026-07-mpr-summary.htm", "The July 10, 2026 report describes the current economy and elevated uncertainty without establishing later outcomes.", "history"),
-          source("Daily Treasury Bill Rates: September 2026", "U.S. Department of the Treasury", "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?field_tdr_date_value_month=202609&type=daily_treasury_bill_rates", "Treasury publishes dated bill quotations through September 10, 2026, within the evidence cutoff.", "mechanism"),
-          source("S&P 500", "S&P Dow Jones Indices", "https://www.spglobal.com/spdji/en/indices/equity/sp-500/", "S&P's data as of September 10, 2026 report a broad index with material top-constituent concentration and no assurance of future performance.", "price")
+          source("Daily Treasury Bill Rates: September 2026", "U.S. Department of the Treasury", "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?field_tdr_date_value_month=202609&type=daily_treasury_bill_rates", "Treasury publishes dated bill quotations through September 10, 2026, within the evidence cutoff.", "mechanism")
         ],
         confidence: "high",
         ethicsNote: "This is educational process guidance, not a prediction, guarantee, or current gambling recommendation."

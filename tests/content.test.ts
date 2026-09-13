@@ -144,6 +144,8 @@ describe("early modern and industrial course content", () => {
 
 describe("modern and recent course content", () => {
   const taskSixBriefings = (): Briefing[] => briefings.filter((briefing) => briefing.window.start >= 1950);
+  const taskSixOpportunity = (id: string) => taskSixBriefings().flatMap((briefing) => briefing.opportunities)
+    .find((opportunity) => opportunity.id === id);
 
   it("completes the 63-window catalog with 90-120 sourced opportunities", () => {
     expect(briefings).toHaveLength(63);
@@ -158,7 +160,7 @@ describe("modern and recent course content", () => {
       "postwar-savings-bond-ladder",
       "sp500-after-launch",
       "public-market-diversification",
-      "berkshire-cash-ownership",
+      "series-e-1965-maturity-plan",
       "legal-gold-after-1974",
       "gold-position-sizing",
       "personal-computer-service",
@@ -194,6 +196,70 @@ describe("modern and recent course content", () => {
     expect(items.flatMap((briefing) => briefing.opportunities)).toHaveLength(44);
   });
 
+  it("uses the direct Treasury maturity table for the 1965-1969 top recommendation", () => {
+    const opportunity = taskSixOpportunity("series-e-1965-maturity-plan");
+
+    expect(opportunity?.destination).toMatch(/savings-bond agent/i);
+    expect(opportunity?.action).toMatch(/December 1965 through May 1969|seven-year original maturity/i);
+    expect(opportunity?.sources.map((source) => source.url)).toContain("https://www.treasurydirect.gov/forms/savpdp0035.pdf");
+    expect(opportunity?.action).not.toMatch(/Berkshire|New York Stock Exchange/i);
+  });
+
+  it("gates the 2002-2003 Amazon case on the already-public 2002 Form 10-K", () => {
+    const opportunity = taskSixOpportunity("amazon-post-crash-sizing");
+
+    expect(opportunity?.destination).toMatch(/after.+2002 Form 10-K.+public.+2003/i);
+    expect(opportunity?.action).toMatch(/once the 2002 Form 10-K is public/i);
+    expect(opportunity?.sources.map((source) => source.url)).toContain("https://www.sec.gov/Archives/edgar/data/1018724/000095014903000355/v87419ore10vk.htm");
+    expect(opportunity?.sources.map((source) => source.url)).not.toContain("https://www.sec.gov/Archives/edgar/data/1018724/000119312504029488/d10k.htm");
+  });
+
+  it("supports dot-com risk control with contemporary SEC and NBER records", () => {
+    const opportunity = taskSixOpportunity("dotcom-deleveraging");
+    const urls = opportunity?.sources.map((source) => source.url);
+
+    expect(urls).toContain("https://www.sec.gov/enforcement-litigation/litigation-releases/lr-16700");
+    expect(urls).toContain("https://www.nber.org/research/data/us-business-cycle-expansions-and-contractions");
+    expect(opportunity?.action).toMatch(/September 14, 2000|March through November 2001/i);
+    expect(opportunity?.sources.map((source) => source.title).join(" ")).not.toMatch(/SecondMarket|S&P 500 Through History/i);
+  });
+
+  it("uses Treasury's direct issue-date table for Series E and early Series EE maturity claims", () => {
+    const maturityTableUrl = "https://www.treasurydirect.gov/forms/savpdp0035.pdf";
+    const cases = [
+      ["postwar-savings-bond-ladder", /10 years|9 years and 8 months/i],
+      ["series-e-maturity-match", /8 years and 11 months|7 years and 9 months/i],
+      ["series-e-1965-maturity-plan", /seven-year original maturity/i],
+      ["early-eighties-ee-maturity-check", /11 years|9 years|8 years/i]
+    ] as const;
+
+    for (const [id, datedTerm] of cases) {
+      const opportunity = taskSixOpportunity(id);
+      expect(opportunity?.sources.map((source) => source.url), `${id} source`).toContain(maturityTableUrl);
+      expect(opportunity?.action, `${id} dated term`).toMatch(datedTerm);
+    }
+
+    const earlyEighties = taskSixOpportunity("early-eighties-ee-maturity-check");
+    expect(earlyEighties?.destination).toMatch(/savings-bond agent/i);
+    expect(earlyEighties?.action).not.toMatch(/auction|dealer|selling before maturity|marketable Treasury/i);
+  });
+
+  it("uses S&P's dated Worth the Weight artifact for the 2024 concentration case", () => {
+    const opportunity = taskSixOpportunity("concentration-rebalance-2024");
+
+    expect(opportunity?.sources.map((source) => source.url)).toContain("https://www.spglobal.com/spdji/en/documents/research/research-worth-the-weight.pdf");
+    expect(opportunity?.action).toMatch(/June 28, 2024.+more than half a century/i);
+    expect(opportunity?.sources.map((source) => source.title).join(" ")).not.toMatch(/Economic Moats/i);
+  });
+
+  it("describes Microsoft's first-day $35.50 as intraday rather than the close", () => {
+    const opportunity = taskSixOpportunity("microsoft-ipo-cash-buy");
+    const publishedClaims = opportunity?.sources.map((source) => source.claim).join(" ");
+
+    expect(opportunity?.action).toMatch(/\$35\.50.+before the end of the day/i);
+    expect(`${opportunity?.action} ${publishedClaims}`).not.toMatch(/\$35\.50 (?:closing|close)/i);
+  });
+
   it("orders published evidence, availability, earlier-arrival posture, and inference", () => {
     for (const briefing of taskSixBriefings()) {
       for (const opportunity of briefing.opportunities) {
@@ -218,11 +284,17 @@ describe("modern and recent course content", () => {
 
   it("ends hindsight in 2026 without a numeric future payoff", () => {
     const current = taskSixBriefings().at(-1);
+    const opportunity = current?.opportunities[0];
     expect(current?.window).toEqual({ start: 2026, end: 2026 });
-    expect(current?.opportunities[0].id).toBe("hindsight-ends-here");
-    expect(current?.opportunities[0].payoff.multiple).toBeUndefined();
-    expect(current?.opportunities[0].payoff.label).not.toMatch(/\b\d+(?:\.\d+)?\s*(?:x|%|percent)\b/i);
-    expect(current?.opportunities[0].action).toMatch(/hindsight ends here/i);
+    expect(opportunity?.id).toBe("hindsight-ends-here");
+    expect(opportunity?.payoff.multiple).toBeUndefined();
+    expect(opportunity?.payoff.label).not.toMatch(/\b\d+(?:\.\d+)?\s*(?:x|%|percent)\b/i);
+    expect(opportunity?.action).toMatch(/hindsight ends here/i);
+    expect(opportunity?.sources.map((source) => source.url)).toEqual([
+      "https://www.federalreserve.gov/monetarypolicy/2026-07-mpr-summary.htm",
+      "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?field_tdr_date_value_month=202609&type=daily_treasury_bill_rates"
+    ]);
+    expect(opportunity?.action).not.toMatch(/S&P|largest index constituents/i);
   });
 });
 

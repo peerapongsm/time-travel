@@ -70,6 +70,14 @@ const retiredBonds = source(
   "mechanism"
 );
 
+const originalMaturityTable = source(
+  "Questions and Answers About Series E/EE Savings Bonds and Savings Notes Issued Before November 1982",
+  "U.S. Department of the Treasury, Bureau of the Fiscal Service",
+  "https://www.treasurydirect.gov/forms/savpdp0035.pdf",
+  "Treasury's original-maturity table assigns Series E bonds issued from December 1965 through May 1969 a seven-year original maturity and lists the other issue-date bands separately.",
+  "mechanism"
+);
+
 const spHistory = source(
   "S&P 500 Through History",
   "S&P Dow Jones Indices",
@@ -127,7 +135,7 @@ export const modern: Briefing[] = [
         id: "postwar-savings-bond-ladder",
         destination: "Authorized U.S. savings-bond agent, 1950-1954",
         title: "Match postwar savings to dated maturities",
-        evidence: "Series E savings bonds remained available in the early 1950s, while Series H, J, and K began in 1952 with published issue and redemption terms.",
+        evidence: "Treasury's table gives Series E bonds issued through April 1952 an original maturity of 10 years and those issued from May 1952 an original maturity of 9 years and 8 months; Treasury introduced Series H, J, and K in 1952.",
         availability: "Buy only a series actually offered on the travel date through an authorized issuing agent and only if the traveler is eligible.",
         earlier: "keep near-term cash liquid, research the current series, and defer purchase until its terms and authorized seller are verified.",
         inference: "ladder modest, lawfully owned savings across available maturity dates and retain registration records instead of treating one bond as emergency cash.",
@@ -138,7 +146,7 @@ export const modern: Briefing[] = [
         payoffLabel: "Scheduled saving with less dependence on a stock-market quotation",
         risks: [{ kind: "liquidity", detail: "A nonmarketable bond may not meet an unexpected cash need without early-redemption limits." }],
         lesson: ["Liquidity matching", "Which funds belong in a savings-bond ladder?", "Money not needed before the stated redemption dates", "Rent and emergency cash", "Safety depends on matching the instrument's access rules to the date the money is needed."],
-        sources: [savingsTimeline, retiredBonds],
+        sources: [savingsTimeline, originalMaturityTable],
         confidence: "high"
       }),
       createOpportunity({
@@ -187,7 +195,7 @@ export const modern: Briefing[] = [
         id: "series-e-maturity-match",
         destination: "Authorized U.S. savings-bond agent, 1955-1959",
         title: "Check the issue month before promising redemption",
-        evidence: "Treasury's retired-bond tables show that Series E maturity periods changed by issue date during this window.",
+        evidence: "Treasury's table assigns Series E bonds issued February 1957 through May 1959 an original maturity of 8 years and 11 months, then assigns June through December 1959 issues an original maturity of 7 years and 9 months.",
         availability: "A purchase is available only through an authorized agent under the exact issue month's rules and eligibility requirements.",
         earlier: "preserve liquid cash and verify the issue-date table before committing funds to a redemption plan.",
         inference: "record the issue month, expected redemption schedule, owner registration, and a separate emergency reserve before buying.",
@@ -198,7 +206,7 @@ export const modern: Briefing[] = [
         payoffLabel: "Predictable saving under issue-specific Treasury terms",
         risks: [{ kind: "liquidity", detail: "Using the wrong issue schedule can leave the saver short when cash is needed." }],
         lesson: ["Instrument vintages", "What determines a retired savings bond's schedule?", "Its series and issue date", "A later bond's current terms", "Products with the same name can carry different rules across vintages."],
-        sources: [savingsTimeline, retiredBonds],
+        sources: [savingsTimeline, originalMaturityTable],
         confidence: "high"
       })
     ]
@@ -249,25 +257,22 @@ export const modern: Briefing[] = [
     window: windows[37],
     opportunities: [
       createOpportunity({
-        id: "berkshire-cash-ownership",
-        destination: "New York Stock Exchange, 1965-1969",
-        title: "Buy a disclosed holding company only with cash",
-        evidence: "Berkshire Hathaway's shareholder archive begins with 1965-era management records, and its annual table reports per-share market-value changes from 1965 onward.",
-        availability: "A purchase requires publicly traded shares, a lawful broker, settled cash, and public reports available on the travel date.",
-        earlier: "research the textile company's filings and preserve liquidity, but defer any purchase until lawful share access and current disclosures are confirmed.",
-        inference: "take only a small cash-funded position, diversify around it, and judge the disclosed capital-allocation record rather than assuming future management outcomes.",
-        category: "asset",
-        capitalTier: "substantial",
-        access: ["A lawful brokerage account, settled cash, public company reports, and capacity to hold an illiquid concentrated position."],
-        exitSignal: "Sell or trim if public capital allocation departs from the thesis or the position overwhelms the portfolio.",
-        payoffLabel: "Exposure to a documented long-run capital-allocation record without leverage",
-        risks: [{ kind: "liquidity", detail: "A remembered survivor can still be volatile, hard to size, and dependent on management execution." }],
-        lesson: ["Survivorship bias", "What should future knowledge change about position size?", "Keep one famous survivor inside a diversified plan", "Make it the entire portfolio", "Knowing one eventual winner hides the many contemporaneous firms that did not survive."],
-        sources: [
-          source("Shareholder Letters", "Berkshire Hathaway", "https://www.berkshirehathaway.com/letters/letters.html", "Berkshire publishes its long-running shareholder-letter archive beginning with the early management period.", "history"),
-          source("2018 Annual Letter", "Berkshire Hathaway", "https://www.berkshirehathaway.com/letters/2018ltr.pdf", "The official annual report tabulates annual per-share market-value changes from 1965 through 2018.", "price")
-        ],
-        ethicsNote: "Trade only public securities through ordinary market access; do not seek nonpublic acquisition plans."
+        id: "series-e-1965-maturity-plan",
+        destination: "Authorized U.S. savings-bond agent, December 1965-May 1969",
+        title: "Verify the seven-year Series E maturity before buying",
+        evidence: "Treasury's original-maturity table records a seven-year original maturity for Series E bonds issued from December 1965 through May 1969.",
+        availability: "Only a Series E bond actually offered on the travel date is available, through an authorized issuing agent and subject to the traveler's eligibility and registration.",
+        earlier: "research the issue-date table, preserve near-term cash, and defer purchase until the authorized agent confirms the current issue and registration terms.",
+        inference: "match a modest bond purchase to a need at least seven years away, record the issue month and owner, and do not invent a resale market for a nonmarketable bond.",
+        category: "security",
+        capitalTier: "pocket",
+        access: ["Eligibility accepted by an authorized agent, lawful funds, current Series E terms, owner registration, and separate emergency cash."],
+        exitSignal: "Redeem under the published rules when the matched need arrives; the original maturity is a planning date, not a guaranteed emergency exit.",
+        payoffLabel: "Issue-dated government saving matched to a later cash need",
+        risks: [{ kind: "liquidity", detail: "A nonmarketable savings bond can be a poor fit for money needed before its planned redemption date." }],
+        lesson: ["Issue-date terms", "What determines the original maturity of this Series E bond?", "Its actual issue-date band in the Treasury table", "A later rule remembered by the traveler", "Treasury changed original maturity across issue-date bands, so the bond's own date controls the plan."],
+        sources: [savingsTimeline, originalMaturityTable],
+        confidence: "high"
       }),
       createOpportunity({
         id: "late-sixties-index-rebalance",
@@ -395,21 +400,22 @@ export const modern: Briefing[] = [
         ethicsNote: "Use licensed software and customer-authorized access; never copy credentials, data, or code."
       }),
       createOpportunity({
-        id: "early-eighties-treasury-ladder",
-        destination: "U.S. Treasury securities market, 1980-1984",
-        title: "Ladder maturities instead of betting on one rate turn",
-        evidence: "The NBER dates two recessions across 1980-82, while Treasury securities remained government obligations with maturity-specific terms.",
-        availability: "A ladder requires securities actually offered through a lawful channel and enough settled cash to hold each rung to maturity.",
-        earlier: "research denominations and maturity dates, preserve near-term liquidity, and defer each purchase until the auction or dealer access is confirmed.",
-        inference: "spread cash needs across short and intermediate maturities rather than leverage a single prediction about interest rates.",
+        id: "early-eighties-ee-maturity-check",
+        destination: "Authorized U.S. savings-bond agent, 1980-1982",
+        title: "Match an early Series EE bond to its issue-date maturity",
+        evidence: "Treasury's table gives Series EE bonds issued January through October 1980 an 11-year original maturity, November 1980 through April 1981 issues 9 years, and May 1981 through October 1982 issues 8 years.",
+        availability: "A Series EE purchase requires an authorized issuing agent, traveler eligibility, the series actually being offered, owner registration, and funds that can remain committed under its redemption rules.",
+        earlier: "research the exact issue-date band, preserve near-term liquidity, and defer purchase until the agent confirms eligibility, registration, and current terms.",
+        inference: "match a modest registered bond to a need no earlier than its issue-specific plan and keep emergency funds outside this nonmarketable instrument.",
         category: "security",
         capitalTier: "working",
-        access: ["A lawful Treasury purchase channel, current terms, settled funds, custody records, and a schedule of future expenses."],
-        exitSignal: "Use maturity proceeds for the planned need or roll only after checking the new rate and liquidity requirement.",
-        payoffLabel: "Known maturity dates through a volatile rate cycle",
-        risks: [{ kind: "liquidity", detail: "Selling before maturity can produce a loss when market rates move." }],
-        lesson: ["Duration", "Why use several maturity dates?", "Reduce dependence on one reinvestment date", "Put every dollar in the longest bond", "A ladder spreads timing risk without pretending to know the exact rate peak."],
-        sources: [cycles, source("Timeline of U.S. Savings Bonds", "U.S. TreasuryDirect", "https://www.treasurydirect.gov/research-center/history-of-savings-bond/timeline/", "Treasury records the 1980 transition from Series E to Series EE and the continued retail savings channel.", "mechanism")]
+        access: ["Eligibility accepted by an authorized agent, lawful funds, exact Series EE issue terms, owner registration, and separate emergency cash."],
+        exitSignal: "Redeem only under the bond's published rules when the matched need arrives; do not assume exchange trading exists.",
+        payoffLabel: "Registered government saving aligned to an issue-specific maturity",
+        risks: [{ kind: "liquidity", detail: "Redemption limits can make a savings bond unsuitable for an earlier cash need." }],
+        lesson: ["Issue-date maturity", "Why must an early Series EE saver record the issue month?", "The original maturity changed across three issue-date bands", "Every early Series EE bond had one identical maturity", "Treasury's table assigns 11-, 9-, and 8-year maturities to successive issue-date bands."],
+        sources: [savingsTimeline, originalMaturityTable],
+        confidence: "high"
       })
     ]
   },
@@ -421,7 +427,7 @@ export const modern: Briefing[] = [
         id: "microsoft-ipo-cash-buy",
         destination: "NASDAQ public offering, March 1986",
         title: "Treat the Microsoft IPO as one risky public company",
-        evidence: "Microsoft went public in March 1986 at a stated offering price of $21, with a higher first-day close and a subsequently documented long price history.",
+        evidence: "Microsoft records that its March 1986 public offering began at $21 and the price increased to $35.50 before the end of the day; that intraday figure is not identified as the closing price.",
         availability: "Shares are available only after the public offering through a lawful broker able to allocate or buy settled shares; future success does not grant an IPO allocation.",
         earlier: "research public filings, keep the intended capital liquid, and defer the trade until shares are public and a broker confirms access.",
         inference: "buy only a small cash-funded position after public trading begins, diversify it, and accept that the executable price may differ from the offer.",
@@ -434,7 +440,7 @@ export const modern: Briefing[] = [
         lesson: ["IPO access", "Does knowing the later winner guarantee the offer price?", "No; buy only through actual public access", "Assume an underwriter owes an allocation", "An offer price is evidence, not a promise that every investor can transact there."],
         sources: [
           source("Facts About Microsoft", "Microsoft", "https://news.microsoft.com/facts-about-microsoft/", "Microsoft's official company facts document its founding, products, and corporate history.", "history"),
-          source("Microsoft goes public", "Microsoft", "https://news.microsoft.com/announcement/microsoft-goes-public/", "Microsoft records the $21 offering price and the first day's $35.50 closing price while describing later appreciation.", "price")
+          source("Microsoft goes public", "Microsoft", "https://news.microsoft.com/announcement/microsoft-goes-public/", "Microsoft records the $21 offering price and says it increased to $35.50 before the end of the first day, without identifying $35.50 as the close.", "price")
         ],
         confidence: "high"
       }),
