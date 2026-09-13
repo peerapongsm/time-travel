@@ -142,6 +142,90 @@ describe("early modern and industrial course content", () => {
   });
 });
 
+describe("modern and recent course content", () => {
+  const taskSixBriefings = (): Briefing[] => briefings.filter((briefing) => briefing.window.start >= 1950);
+
+  it("completes the 63-window catalog with 90-120 sourced opportunities", () => {
+    expect(briefings).toHaveLength(63);
+    expect(briefings.map((briefing) => briefing.window)).toEqual(windows);
+    expect(briefings.flatMap((briefing) => briefing.opportunities).length).toBeGreaterThanOrEqual(90);
+    expect(briefings.flatMap((briefing) => briefing.opportunities).length).toBeLessThanOrEqual(120);
+    expect(validateBriefings(briefings)).toEqual([]);
+  });
+
+  it("locks the curated top recommendation for every 1950-2026 window", () => {
+    const firstOpportunityIds = [
+      "postwar-savings-bond-ladder",
+      "sp500-after-launch",
+      "public-market-diversification",
+      "berkshire-cash-ownership",
+      "legal-gold-after-1974",
+      "gold-position-sizing",
+      "personal-computer-service",
+      "microsoft-ipo-cash-buy",
+      "broad-index-rebalancing",
+      "amazon-post-ipo-sizing",
+      "dotcom-deleveraging",
+      "amazon-post-crash-sizing",
+      "google-ipo-public-auction",
+      "pre-crisis-deleveraging",
+      "crisis-index-rebalance",
+      "bitcoin-acquisition-custody",
+      "diversified-equity-recovery",
+      "ethereum-crowdsale-custody",
+      "diversified-index-2016",
+      "rebalance-crypto-2017",
+      "treasury-bill-liquidity-2018",
+      "diversified-plan-2019",
+      "pandemic-rebalance-2020",
+      "inflation-linked-savings-2021",
+      "treasury-bill-ladder-2022",
+      "cash-yield-diversification-2023",
+      "concentration-rebalance-2024",
+      "liquidity-buffer-2025",
+      "hindsight-ends-here"
+    ];
+
+    const items = taskSixBriefings();
+    expect(items.map((briefing) => briefing.window)).toEqual(windows.slice(34));
+    items.forEach((briefing, index) => {
+      expect(briefing.opportunities[0].id).toBe(firstOpportunityIds[index]);
+    });
+    expect(items.flatMap((briefing) => briefing.opportunities)).toHaveLength(44);
+  });
+
+  it("orders published evidence, availability, earlier-arrival posture, and inference", () => {
+    for (const briefing of taskSixBriefings()) {
+      for (const opportunity of briefing.opportunities) {
+        expect(opportunity.action).toMatch(/^Case evidence:\s+\S[\s\S]*?\s+Availability:\s+\S[\s\S]*?\s+Earlier arrival:\s+\S[\s\S]*?\s+Inference:\s+\S[\s\S]*$/);
+        if (briefing.window.start !== briefing.window.end) {
+          expect(opportunity.action).toMatch(/Earlier arrival:[\s\S]*\b(?:prepare|defer|keep|hold|learn|build|wait|preserve|verify|research)\b/i);
+        }
+      }
+    }
+  });
+
+  it("publishes one correct lesson and the required evidence roles", () => {
+    for (const opportunity of taskSixBriefings().flatMap((briefing) => briefing.opportunities)) {
+      expect(opportunity.lesson.choices).toHaveLength(2);
+      expect(opportunity.lesson.choices.filter((choice) => choice.correct)).toHaveLength(1);
+      expect(opportunity.sources.some((source) => source.kind === "history")).toBe(true);
+      if (opportunity.category === "asset") {
+        expect(opportunity.sources.some((source) => source.kind === "price" || source.kind === "mechanism")).toBe(true);
+      }
+    }
+  });
+
+  it("ends hindsight in 2026 without a numeric future payoff", () => {
+    const current = taskSixBriefings().at(-1);
+    expect(current?.window).toEqual({ start: 2026, end: 2026 });
+    expect(current?.opportunities[0].id).toBe("hindsight-ends-here");
+    expect(current?.opportunities[0].payoff.multiple).toBeUndefined();
+    expect(current?.opportunities[0].payoff.label).not.toMatch(/\b\d+(?:\.\d+)?\s*(?:x|%|percent)\b/i);
+    expect(current?.opportunities[0].action).toMatch(/hindsight ends here/i);
+  });
+});
+
 const validBriefing = (): Briefing => ({
   id: "fixture",
   window: windows[4],
