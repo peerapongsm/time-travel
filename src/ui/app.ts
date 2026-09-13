@@ -37,6 +37,7 @@ export const renderApp = (root: HTMLElement): void => {
   navigation.className = "course-navigation";
   navigation.setAttribute("aria-label", "Course navigation");
   const navigationButtons = new Map<View, HTMLButtonElement>();
+  let arrival: HTMLElement;
   const updateArrivalHeading = (tag: "h1" | "h2"): void => {
     const current = rail.querySelector<HTMLElement>(".arrival-console > h1, .arrival-console > h2");
     if (!current || current.tagName.toLowerCase() === tag) return;
@@ -45,6 +46,19 @@ export const renderApp = (root: HTMLElement): void => {
     replacement.className = current.className;
     replacement.textContent = current.textContent;
     current.replaceWith(replacement);
+  };
+  const onArrivalRouteChange = (nextRoute: RouteState): void => {
+    const resolvedRoute = resolveRoute(nextRoute);
+    writeRoute(resolvedRoute);
+    route = resolvedRoute;
+    shell.dataset.briefingId = resolvedRoute.briefingId ?? "";
+    view = resolvedRoute.briefingId ? "briefing" : "arrival";
+    renderPane(resolvedRoute.briefingId);
+  };
+  const syncArrival = (): void => {
+    const nextArrival = renderArrival({ route, items: briefings, onRouteChange: onArrivalRouteChange });
+    arrival.replaceWith(nextArrival);
+    arrival = nextArrival;
   };
   const renderPane = (briefingId: string | null): void => {
     navigationButtons.forEach((button, name) => button.setAttribute("aria-pressed", String(name === view)));
@@ -58,6 +72,7 @@ export const renderApp = (root: HTMLElement): void => {
           writeRoute(resolvedRoute);
           route = resolvedRoute;
           shell.dataset.briefingId = resolvedRoute.briefingId ?? "";
+          syncArrival();
           view = "briefing";
           renderPane(resolvedRoute.briefingId);
         }
@@ -97,18 +112,12 @@ export const renderApp = (root: HTMLElement): void => {
     navigationButtons.set(name, button);
     navigation.append(button);
   });
-  rail.append(navigation, renderArrival({
+  arrival = renderArrival({
     route,
     items: briefings,
-    onRouteChange: (nextRoute) => {
-      const resolvedRoute = resolveRoute(nextRoute);
-      writeRoute(resolvedRoute);
-      route = resolvedRoute;
-      shell.dataset.briefingId = resolvedRoute.briefingId ?? "";
-      view = resolvedRoute.briefingId ? "briefing" : "arrival";
-      renderPane(resolvedRoute.briefingId);
-    }
-  }));
+    onRouteChange: onArrivalRouteChange
+  });
+  rail.append(navigation, arrival);
   renderPane(route.briefingId);
   shell.append(rail, briefing);
   root.append(shell);

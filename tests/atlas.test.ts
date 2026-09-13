@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Briefing } from "../src/domain";
 import { completeLesson } from "../src/lib/progress";
+import { briefings } from "../src/data";
 import { renderAtlas } from "../src/ui/atlas";
 import { renderApp } from "../src/ui/app";
 
@@ -49,6 +50,22 @@ describe("briefing atlas", () => {
     expect(view.textContent).not.toContain("other title");
   });
 
+  it("renders an alternative opportunity when only it matches", () => {
+    const firstLedgers = briefings.find(({ id }) => id === "first-ledgers")!;
+    const view = renderAtlas({ items: [firstLedgers] });
+
+    ([
+      ["mechanism", "trade"], ["capital", "working"], ["risk", "custody"]
+    ] as const).forEach(([name, value]) => {
+      const control = view.querySelector<HTMLSelectElement>(`select[name='${name}']`)!;
+      control.value = value;
+      control.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    expect(view.textContent).toContain("Sell a small, verified cargo across the Gulf");
+    expect(view.textContent).not.toContain("Make yourself useful at the grain ledger");
+  });
+
   it("announces no results, stamps completion, and opens through its callback", () => {
     window.localStorage.clear();
     const item = briefing("completed", 2026, "New York, United States");
@@ -75,5 +92,8 @@ describe("briefing atlas", () => {
 
     expect(window.location.search).toMatch(/^\?year=3000&era=BCE&briefing=/);
     expect(root.querySelector(".historical-briefing")).not.toBeNull();
+    expect(root.querySelector<HTMLInputElement>(".arrival-console input[name='year']")?.value).toBe("3000");
+    expect(root.querySelector<HTMLButtonElement>(".arrival-console button[aria-label='Use BCE']")?.getAttribute("aria-pressed")).toBe("true");
+    expect(root.querySelector(".arrival-console [role='status']")?.textContent).toBe("Briefing ready for 3000 BCE.");
   });
 });

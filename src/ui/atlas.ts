@@ -25,14 +25,15 @@ const regionFor = (destination: string): (typeof regions)[number] => {
   return "Global";
 };
 
-const matches = (briefing: Briefing, filter: Filter): boolean => {
-  const eraMatches = filter.era === "all" || (filter.era === "BCE" ? briefing.window.end <= 0 : briefing.window.start >= 1);
-  return eraMatches && briefing.opportunities.some((opportunity) =>
+const opportunityMatches = (opportunity: Opportunity, filter: Filter): boolean =>
     (filter.mechanism === "all" || opportunity.category === filter.mechanism)
     && (filter.capital === "all" || opportunity.capitalTier === filter.capital)
     && (filter.risk === "all" || opportunity.risks.some((risk) => risk.kind === filter.risk))
-    && (filter.region === "all" || regionFor(opportunity.destination) === filter.region)
-  );
+    && (filter.region === "all" || regionFor(opportunity.destination) === filter.region);
+
+const matchingOpportunity = (briefing: Briefing, filter: Filter): Opportunity | undefined => {
+  const eraMatches = filter.era === "all" || (filter.era === "BCE" ? briefing.window.end <= 0 : briefing.window.start >= 1);
+  return eraMatches ? briefing.opportunities.find((opportunity) => opportunityMatches(opportunity, filter)) : undefined;
 };
 
 const addOptions = (select: HTMLSelectElement, values: readonly string[], allLabel: string): void => {
@@ -85,7 +86,10 @@ export const renderAtlas = ({ items, onOpen }: AtlasOptions): HTMLElement => {
   const filter: Filter = { era: "all", mechanism: "all", capital: "all", risk: "all", region: "all" };
 
   const update = (): void => {
-    const visible = items.filter((briefing) => matches(briefing, filter));
+    const visible = items.flatMap((briefing) => {
+      const opportunity = matchingOpportunity(briefing, filter);
+      return opportunity ? [{ briefing, opportunity }] : [];
+    });
     const completed = new Set(loadProgress().completedBriefingIds);
     status.textContent = `${visible.length} briefing${visible.length === 1 ? "" : "s"} found.`;
     results.replaceChildren();
@@ -96,9 +100,7 @@ export const renderAtlas = ({ items, onOpen }: AtlasOptions): HTMLElement => {
       results.append(empty);
       return;
     }
-    visible.forEach((briefing) => {
-      const opportunity = briefing.opportunities[0];
-      if (!opportunity) return;
+    visible.forEach(({ briefing, opportunity }) => {
       const card = document.createElement("article");
       card.className = "atlas-card";
       const heading = document.createElement("h2");
