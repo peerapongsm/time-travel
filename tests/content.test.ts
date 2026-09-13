@@ -99,7 +99,7 @@ describe("early modern and industrial course content", () => {
 
     expect(opportunities.size).toBe(32);
     for (const opportunity of opportunities.values()) {
-      expect(opportunity.action).toMatch(/^Case evidence:[\s\S]+?\s+Availability:\s+\S[\s\S]+?\s+Inference:/);
+      expect(opportunity.action).toMatch(/^Case evidence:\s+\S[\s\S]*?\s+Availability:\s+\S[\s\S]*?\s+Earlier arrival:\s+\S[\s\S]*?\s+Inference:\s+\S[\s\S]*$/);
     }
 
     const lateMechanisms = [
