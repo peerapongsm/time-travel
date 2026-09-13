@@ -18,7 +18,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   min-height: 44px;
   border: 1px solid #435466;
   border-radius: 0.65rem;
@@ -37,12 +38,20 @@ button:hover {
 }
 
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible {
   outline: 3px solid #7dd3fc;
   outline-offset: 2px;
 }
 
 input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  color: #111827;
+  background: #f8fafc;
+}
+
+select {
   width: 100%;
   padding: 0.65rem 0.75rem;
   color: #111827;
@@ -178,6 +187,105 @@ input {
   letter-spacing: -0.03em;
 }
 
+.course-navigation {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.course-navigation button {
+  min-width: 0;
+  font-size: 0.9rem;
+}
+
+.course-navigation button[aria-pressed="true"] {
+  border-color: #7dd3fc;
+  color: #07131d;
+  background: #7dd3fc;
+}
+
+.atlas,
+.methodology {
+  display: grid;
+  gap: 1rem;
+}
+
+.atlas > h1,
+.methodology > h1 {
+  margin: 0;
+  color: #f8fafc;
+}
+
+.atlas > p,
+.methodology > p,
+.methodology section p {
+  margin: 0;
+  color: #b7c4d1;
+  line-height: 1.5;
+}
+
+.atlas-controls {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #314355;
+  border-radius: 0.8rem;
+  background: #172330;
+}
+
+.atlas-controls > div {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.atlas-controls label {
+  color: #dce7f1;
+  font-weight: 700;
+}
+
+.atlas-status,
+.atlas-empty {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.atlas-status {
+  color: #bbf7d0;
+}
+
+.atlas-empty {
+  color: #fecaca;
+}
+
+.atlas-results {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.atlas-card,
+.methodology section {
+  padding: 1rem;
+  border: 1px solid #314355;
+  border-radius: 0.8rem;
+  background: #172330;
+}
+
+.atlas-card h2,
+.methodology h2 {
+  margin-top: 0;
+  color: #f8fafc;
+}
+
+.atlas-card p {
+  color: #b7c4d1;
+  line-height: 1.5;
+}
+
+.atlas-card button {
+  width: 100%;
+}
+
 .arrival-intro,
 .field-hint {
   color: #b7c4d1;
@@ -311,6 +419,10 @@ input {
   .era-jumps {
     display: none;
   }
+
+  .course-navigation {
+    margin-bottom: 0.75rem;
+  }
 }
 
 @media (min-width: 800px) {
@@ -330,6 +442,10 @@ input {
   .briefing-pane {
     max-height: calc(100vh - 3rem);
     overflow: auto;
+  }
+
+  .atlas-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

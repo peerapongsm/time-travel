@@ -2,9 +2,13 @@ import { briefings } from "../data";
 import { resolveBriefing } from "../lib/resolve";
 import { readRoute, writeRoute } from "../lib/route";
 import type { RouteState } from "../lib/route";
-import { parseYear } from "../lib/year";
+import { astronomicalToCivil, parseYear } from "../lib/year";
 import { renderArrival } from "./arrival";
+import { renderAtlas } from "./atlas";
 import { renderBriefing } from "./briefing";
+import { renderMethodology } from "./methodology";
+
+type View = "arrival" | "atlas" | "methodology" | "briefing";
 
 const resolveRoute = (route: RouteState): RouteState => {
   const year = parseYear(route.year.year, route.year.era);
@@ -17,7 +21,7 @@ const resolveRoute = (route: RouteState): RouteState => {
 
 export const renderApp = (root: HTMLElement): void => {
   root.replaceChildren();
-  const route = resolveRoute(readRoute());
+  let route = resolveRoute(readRoute());
   const shell = document.createElement("div");
   if (route.briefingId) {
     shell.dataset.briefingId = route.briefingId;
@@ -28,8 +32,43 @@ export const renderApp = (root: HTMLElement): void => {
   const briefing = document.createElement("main");
   briefing.className = "briefing-pane";
   briefing.tabIndex = -1;
+  let view: View = route.briefingId ? "briefing" : "arrival";
+  const navigation = document.createElement("nav");
+  navigation.className = "course-navigation";
+  navigation.setAttribute("aria-label", "Course navigation");
+  const navigationButtons = new Map<View, HTMLButtonElement>();
+  const updateArrivalHeading = (tag: "h1" | "h2"): void => {
+    const current = rail.querySelector<HTMLElement>(".arrival-console > h1, .arrival-console > h2");
+    if (!current || current.tagName.toLowerCase() === tag) return;
+    const replacement = document.createElement(tag);
+    replacement.id = current.id;
+    replacement.className = current.className;
+    replacement.textContent = current.textContent;
+    current.replaceWith(replacement);
+  };
   const renderPane = (briefingId: string | null): void => {
-    const selected = briefingId ? briefings.find(({ id }) => id === briefingId) : undefined;
+    navigationButtons.forEach((button, name) => button.setAttribute("aria-pressed", String(name === view)));
+    updateArrivalHeading(view === "arrival" ? "h1" : "h2");
+    if (view === "atlas") {
+      briefing.replaceChildren(renderAtlas({
+        items: briefings,
+        onOpen: (selected) => {
+          const nextRoute = { year: astronomicalToCivil(selected.window.start), briefingId: selected.id };
+          const resolvedRoute = resolveRoute(nextRoute);
+          writeRoute(resolvedRoute);
+          route = resolvedRoute;
+          shell.dataset.briefingId = resolvedRoute.briefingId ?? "";
+          view = "briefing";
+          renderPane(resolvedRoute.briefingId);
+        }
+      }));
+      return;
+    }
+    if (view === "methodology") {
+      briefing.replaceChildren(renderMethodology());
+      return;
+    }
+    const selected = view === "briefing" && briefingId ? briefings.find(({ id }) => id === briefingId) : undefined;
     if (selected) {
       briefing.replaceChildren(renderBriefing({ briefing: selected }));
       return;
@@ -40,17 +79,37 @@ export const renderApp = (root: HTMLElement): void => {
     copy.textContent = "Your selected briefing will appear here.";
     briefing.replaceChildren(heading, copy);
   };
-  renderPane(route.briefingId);
-  rail.append(renderArrival({
+  const setView = (nextView: View): void => {
+    view = nextView;
+    renderPane(route.briefingId);
+    briefing.focus();
+  };
+  ([
+    ["arrival", "Arrival"],
+    ["atlas", "Browse atlas"],
+    ["methodology", "Methodology"]
+  ] as const).forEach(([name, label]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.view = name;
+    button.textContent = label;
+    button.addEventListener("click", () => setView(name));
+    navigationButtons.set(name, button);
+    navigation.append(button);
+  });
+  rail.append(navigation, renderArrival({
     route,
     items: briefings,
     onRouteChange: (nextRoute) => {
       const resolvedRoute = resolveRoute(nextRoute);
       writeRoute(resolvedRoute);
+      route = resolvedRoute;
       shell.dataset.briefingId = resolvedRoute.briefingId ?? "";
+      view = resolvedRoute.briefingId ? "briefing" : "arrival";
       renderPane(resolvedRoute.briefingId);
     }
   }));
+  renderPane(route.briefingId);
   shell.append(rail, briefing);
   root.append(shell);
 };
